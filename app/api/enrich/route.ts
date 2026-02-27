@@ -73,7 +73,7 @@ Field to enrich:
       model: anthropic('claude-sonnet-4-6'),
       system: SYSTEM_PROMPT,
       prompt: userPrompt,
-      maxTokens: 1500,
+      maxOutputTokens: 1500,
     });
 
     // Strip markdown code fences if present
