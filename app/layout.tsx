@@ -33,8 +33,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <Link href="/conditions" className="text-gray-400 hover:text-white transition-colors">
                 Conditions
               </Link>
+              <Link href="/explore" className="text-gray-400 hover:text-white transition-colors">
+                Explore
+              </Link>
             </nav>
-            <div className="ml-auto text-xs text-gray-600">799 embeddings · gte-small</div>
+            <div className="ml-auto text-xs text-gray-600">944 embeddings · gte-small</div>
           </div>
         </header>
         <main className="max-w-7xl mx-auto px-4 py-8">
