@@ -22,7 +22,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             </Link>
             <nav className="flex gap-6 text-sm">
               <Link href="/" className="text-gray-400 hover:text-white transition-colors">
-                Search
+                Ask
+              </Link>
+              <Link href="/scenario" className="text-gray-400 hover:text-white transition-colors">
+                Scenario
               </Link>
               <Link href="/fields" className="text-gray-400 hover:text-white transition-colors">
                 Fields
