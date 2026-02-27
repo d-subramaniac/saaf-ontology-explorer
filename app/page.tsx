@@ -47,7 +47,11 @@ export default function AskPage() {
         body: JSON.stringify({ messages: newMessages }),
       });
 
-      if (!res.ok || !res.body) throw new Error(`Request failed: ${res.status}`);
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || `Request failed: ${res.status}`);
+      }
+      if (!res.body) throw new Error(`No response body`);
 
       const reader = res.body.getReader();
       const decoder = new TextDecoder();

@@ -29,6 +29,10 @@ interface SearchResult {
 }
 
 export async function POST(req: Request) {
+  if (!process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY === 'your_key_here') {
+    return new Response('ANTHROPIC_API_KEY is not configured on the server.', { status: 500 });
+  }
+
   const { prompt } = await req.json() as { prompt: string };
 
   let systemWithContext = SYSTEM;
