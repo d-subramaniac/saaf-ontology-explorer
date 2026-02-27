@@ -1,10 +1,17 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const functionsUrl = process.env.NEXT_PUBLIC_SUPABASE_FUNCTIONS_URL!;
+// Lazy client — not initialized at module eval time so Vercel static prerender doesn't fail
+let _supabase: SupabaseClient | null = null;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+function getSupabase(): SupabaseClient {
+  if (!_supabase) {
+    _supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+  }
+  return _supabase;
+}
 
 export interface OntologyResult {
   id: string;
@@ -24,6 +31,7 @@ export async function searchOntology(
   } = {}
 ): Promise<OntologyResult[]> {
   const { match_count = 10, match_threshold = 0.3, filter_type = null } = options;
+  const functionsUrl = process.env.NEXT_PUBLIC_SUPABASE_FUNCTIONS_URL!;
 
   const res = await fetch(`${functionsUrl}/search-ontology`, {
     method: 'POST',
@@ -33,10 +41,10 @@ export async function searchOntology(
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err.error ?? `Search failed: ${res.status}`);
+    throw new Error((err as { error?: string }).error ?? `Search failed: ${res.status}`);
   }
 
-  const data = await res.json();
+  const data = await res.json() as { results?: OntologyResult[] };
   return data.results ?? [];
 }
 
@@ -53,12 +61,12 @@ export async function getOntologyByType(
   content_type: string,
   limit = 500
 ): Promise<OntologyRecord[]> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('ontology_embeddings')
     .select('id, content_type, content_id, content_text, metadata')
     .eq('content_type', content_type)
     .limit(limit);
 
   if (error) throw error;
-  return data ?? [];
+  return (data ?? []) as OntologyRecord[];
 }
