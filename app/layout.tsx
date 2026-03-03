@@ -37,7 +37,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 Explore
               </Link>
             </nav>
-            <div className="ml-auto text-xs text-gray-600">944 embeddings · gte-small</div>
+            <div className="ml-auto text-xs text-gray-600">940 embeddings · gte-small</div>
           </div>
         </header>
         <main className="max-w-7xl mx-auto px-4 py-8">
