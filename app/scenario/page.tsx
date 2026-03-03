@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useCompletion } from '@ai-sdk/react';
+import ReactMarkdown from 'react-markdown';
 
 interface ScenarioParams {
   dscr: string;
@@ -268,8 +269,11 @@ export default function ScenarioPage() {
                   </span>
                 )}
               </div>
-              <div className="text-sm text-gray-200 leading-relaxed whitespace-pre-wrap">
-                {completion}
+              <div className="text-sm text-gray-200 leading-relaxed prose prose-invert prose-sm max-w-none
+                prose-headings:text-white prose-headings:font-semibold prose-headings:mt-4 prose-headings:mb-2
+                prose-h2:text-base prose-h2:border-b prose-h2:border-gray-700 prose-h2:pb-1
+                prose-ul:my-1 prose-li:my-0.5 prose-p:my-1 prose-strong:text-white">
+                <ReactMarkdown>{completion}</ReactMarkdown>
               </div>
             </div>
           )}
