@@ -63,7 +63,7 @@ export default function ScenarioPage() {
   const [params, setParams] = useState<ScenarioParams>(DEFAULTS);
   const [submitted, setSubmitted] = useState(false);
 
-  const { completion, complete, isLoading } = useCompletion({ api: '/api/analyze' });
+  const { completion, complete, isLoading } = useCompletion({ api: '/api/analyze', streamProtocol: 'text' });
 
   async function handleAnalyze(e: React.FormEvent) {
     e.preventDefault();
