@@ -9,6 +9,7 @@ const LINKS = [
   { href: '/fields',    label: 'Fields' },
   { href: '/conditions',label: 'Conditions' },
   { href: '/explore',   label: 'Explore' },
+  { href: '/editor',    label: 'YAML' },
 ];
 
 export default function NavLinks() {
