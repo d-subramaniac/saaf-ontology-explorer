@@ -12,32 +12,49 @@ Core DSCR lending facts:
 - Minimum DSCR: 0.75 SFR, 1.0 STR/Foreign National/NW Condo/Condotel, 1.1 for 5-10 unit
 - DSCR < 0.75 is ineligible
 - DSCR 0.75-0.99 requires 0x30x12 mortgage history and reduced max LTV
-- DSCR ≥ 1.25 receives a pricing bonus; 0.75-0.99 gets penalty; <0.75 ineligible
+- DSCR ≥ 1.25 receives a pricing bonus; 0.75-0.99 gets penalty
 - PITIA = P&I (or IO) + Tax + Insurance + HOA + Flood + Other
 
-Structure your scenario analysis with these exact sections:
+LLPA pricing adjustment categories (direction — exact values from current rate sheet):
+- DSCR tier: ≥1.25 = NEGATIVE (bonus), 1.0-1.24 = no adjustment, 0.75-0.99 = POSITIVE penalty (increases with LTV)
+- FICO/LTV matrix: lower FICO = positive adjustment; higher LTV = positive adjustment
+- Loan amount: <$150K and >$2M tiers carry positive adjustments
+- Interest Only: positive adjustment (~+0.50 pts)
+- Foreign National: positive surcharge
+- Non-Permanent Resident: positive surcharge
+- Short-Term Rental: additional surcharge
+- NW Condo / Condotel: surcharge + LTV cap
+- Cash-out refinance: positive adjustment vs purchase/R&T
+- Prepayment penalty: declining schedule (5yr PPP = negative adjustment bonus)
+
+Structure your analysis with these exact ## section headers in this order:
 ## Eligibility Status
-State: ELIGIBLE / ELIGIBLE WITH RESTRICTIONS / INELIGIBLE, then explain why.
+State ELIGIBLE / ELIGIBLE WITH RESTRICTIONS / INELIGIBLE as the first bullet. Explain in 2-3 bullets.
 
 ## Eligibility Blockers
-List anything that makes this loan ineligible (if none, say "None").
+List anything that makes this loan ineligible or severely restricted. If none, write "None identified."
 
 ## Max LTV
-State the maximum LTV for this scenario based on DSCR tier + FICO + loan amount + property type.
+State the maximum LTV for this scenario based on DSCR tier + FICO + property type. Use ontology context if available.
 
 ## Pricing Adjustments (LLPAs)
-List each applicable LLPA with its exact value. Show the calculation.
+List each LLPA category that applies: state the direction (bonus/penalty) and the reason. Note that exact point values change weekly — cite the category name and direction only unless the ontology context has specific values.
 
 ## Conditions Required
-List all underwriting conditions that would be triggered.
+List specific underwriting conditions triggered by this scenario (e.g., 0x30x12 mortgage history, reserves, appraisal type).
 
 ## Key Restrictions
-List specific restrictions for this scenario.
+List specific restrictions — max loan amount, prohibited features, overlays.
 
 ## Documentation Requirements
-List documents specific to this scenario.
+List documents specifically required for this scenario beyond standard package.
 
-Be specific with exact thresholds from the ontology context. Never guess — if context is missing for something, say so explicitly.`;
+Rules:
+- Bullet points only — no prose paragraphs
+- Cite exact thresholds (e.g. "DSCR minimum 1.0 for Foreign National", "max LTV 65% at this DSCR tier")
+- 3-6 bullets per section
+- If ontology context doesn't cover something, say "not in ontology context"`;
+
 
 interface SearchResult {
   content_type: string;

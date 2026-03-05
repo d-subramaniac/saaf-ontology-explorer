@@ -77,21 +77,7 @@ function buildQuestion(p: ScenarioParams): string {
   if (p.isInterestOnly) parts.push('interest-only');
   if (p.isShortTermRental) parts.push('short-term rental');
 
-  return `Analyze this DSCR loan scenario. Use EXACTLY these ## section headers in this order:
-
-## Eligibility
-## Triggered Conditions
-## Pricing Adjustments
-## Requirements & Restrictions
-## Documentation Required
-
-Rules:
-- Bullet points only inside each section — no prose paragraphs
-- Cite exact thresholds and rule names (e.g. "DSCR minimum 0.75", "0x30x12 mortgage history")
-- Keep each section to 4-7 bullets max
-- For Eligibility: first bullet must be **ELIGIBLE**, **ELIGIBLE WITH RESTRICTIONS**, or **INELIGIBLE**
-
-Loan parameters: ${parts.join(', ')}.`;
+  return `Analyze this DSCR loan scenario: ${parts.join(', ')}.`;
 }
 
 const PROPERTY_TYPES = ['SFR', '2-4 Unit', '5-10 Unit', 'Warrantable Condo', 'NW Condo', 'Condotel', 'STR (Short-Term Rental)'];
@@ -155,7 +141,7 @@ export default function ScenarioPage() {
   if (params.isShortTermRental) summaryChips.push('STR');
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-6xl mx-auto">
       <div className="mb-6">
         <h1 className="text-xl font-semibold text-gray-900 mb-1">Scenario Analyzer</h1>
         <p className="text-sm text-gray-500">Input loan parameters to get a complete analysis — eligibility, conditions, pricing adjustments, and requirements.</p>

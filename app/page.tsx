@@ -228,7 +228,7 @@ export default function AskPage() {
   const isEmpty = messages.length === 0;
 
   return (
-    <div className="max-w-2xl mx-auto flex flex-col" style={{ minHeight: 'calc(100vh - 120px)' }}>
+    <div className="max-w-3xl mx-auto flex flex-col" style={{ minHeight: 'calc(100vh - 120px)' }}>
       {/* Stats strip */}
       <div className="mb-6">
         <h1 className="text-xl font-semibold text-gray-900 mb-1">Ask the Ontology</h1>
