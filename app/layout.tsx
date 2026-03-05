@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import Link from 'next/link';
+import NavLinks from './components/NavLinks';
 import './globals.css';
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
@@ -20,23 +21,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <Link href="/" className="font-semibold text-gray-900 tracking-tight">
               Saaf Ontology
             </Link>
-            <nav className="flex gap-6 text-sm">
-              <Link href="/" className="text-gray-500 hover:text-gray-900 transition-colors">
-                Ask
-              </Link>
-              <Link href="/scenario" className="text-gray-500 hover:text-gray-900 transition-colors">
-                Scenario
-              </Link>
-              <Link href="/fields" className="text-gray-500 hover:text-gray-900 transition-colors">
-                Fields
-              </Link>
-              <Link href="/conditions" className="text-gray-500 hover:text-gray-900 transition-colors">
-                Conditions
-              </Link>
-              <Link href="/explore" className="text-gray-500 hover:text-gray-900 transition-colors">
-                Explore
-              </Link>
-            </nav>
+            <NavLinks />
             <div className="ml-auto text-xs text-gray-400">974 embeddings · gte-small</div>
           </div>
         </header>

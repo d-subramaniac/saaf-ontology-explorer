@@ -30,6 +30,40 @@ const DEFAULTS: ScenarioParams = {
   isShortTermRental: false,
 };
 
+interface DemoScenario {
+  label: string;
+  description: string;
+  color: string;
+  params: ScenarioParams;
+}
+
+const DEMO_SCENARIOS: DemoScenario[] = [
+  {
+    label: 'Standard SFR',
+    description: 'Strong DSCR, clean profile',
+    color: 'bg-emerald-50 border-emerald-200 hover:border-emerald-400 text-emerald-800',
+    params: { dscr: '1.30', ltv: '70', creditScore: '740', propertyType: 'SFR', loanPurpose: 'Purchase', citizenship: 'US Citizen / Permanent Resident', loanAmount: '500000', units: '1', isInterestOnly: false, isShortTermRental: false },
+  },
+  {
+    label: 'Foreign National',
+    description: 'DSCR < 1.0 — ineligibility triggers',
+    color: 'bg-red-50 border-red-200 hover:border-red-400 text-red-800',
+    params: { dscr: '0.92', ltv: '65', creditScore: '720', propertyType: 'SFR', loanPurpose: 'Purchase', citizenship: 'Foreign National', loanAmount: '750000', units: '1', isInterestOnly: false, isShortTermRental: false },
+  },
+  {
+    label: '5-10 Unit',
+    description: 'Multi-family near DSCR threshold',
+    color: 'bg-amber-50 border-amber-200 hover:border-amber-400 text-amber-800',
+    params: { dscr: '1.05', ltv: '75', creditScore: '700', propertyType: '5-10 Unit', loanPurpose: 'Purchase', citizenship: 'US Citizen / Permanent Resident', loanAmount: '1200000', units: '5-10', isInterestOnly: false, isShortTermRental: false },
+  },
+  {
+    label: 'STR Interest-Only',
+    description: 'Short-term rental, IO, high LTV',
+    color: 'bg-purple-50 border-purple-200 hover:border-purple-400 text-purple-800',
+    params: { dscr: '1.10', ltv: '80', creditScore: '760', propertyType: 'STR (Short-Term Rental)', loanPurpose: 'Cash-out Refinance', citizenship: 'US Citizen / Permanent Resident', loanAmount: '650000', units: '1', isInterestOnly: true, isShortTermRental: true },
+  },
+];
+
 function buildQuestion(p: ScenarioParams): string {
   const parts: string[] = [];
   if (p.dscr) parts.push(`DSCR of ${p.dscr}`);
@@ -120,6 +154,24 @@ export default function ScenarioPage() {
       <div className="mb-6">
         <h1 className="text-xl font-semibold text-gray-900 mb-1">Scenario Analyzer</h1>
         <p className="text-sm text-gray-500">Input loan parameters to get a complete analysis — eligibility, conditions, pricing adjustments, and requirements.</p>
+      </div>
+
+      {/* Demo scenario quick-fills */}
+      <div className="mb-5">
+        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Demo Scenarios — click to load</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          {DEMO_SCENARIOS.map(ds => (
+            <button
+              key={ds.label}
+              type="button"
+              onClick={() => setParams(ds.params)}
+              className={`text-left px-3 py-2.5 rounded-lg border text-sm transition-colors ${ds.color}`}
+            >
+              <p className="font-semibold text-xs">{ds.label}</p>
+              <p className="text-xs opacity-70 mt-0.5">{ds.description}</p>
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-[320px_1fr] gap-6 items-start">
