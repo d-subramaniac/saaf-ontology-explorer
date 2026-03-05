@@ -48,13 +48,13 @@ export async function POST(req: Request) {
   const body = await req.json() as { field?: FieldData } | FieldData;
   const field = ('field' in body && body.field) ? body.field : body as FieldData;
 
-  const userPrompt = `Enrich this DSCR loan ontology field and return a JSON object with these exact keys:
-- enriched_definition (string): 1-3 sentence precise domain definition
-- suggested_rules (array): each has { rule: string, confidence: "high"|"medium"|"low", source: string }
-- suggested_dependencies (array): each has { field: string, relationship: "depends_on"|"affects", reason: string }
-- expert_questions (array of strings): gaps to fill with domain expert
+  const userPrompt = `Enrich this DSCR loan ontology field. Return a JSON object with exactly these keys. Be concise — keep strings short, limit arrays to 5 items max:
+- enriched_definition (string): 1-2 sentence precise domain definition
+- suggested_rules (array, max 5): each { rule: string (max 120 chars), confidence: "high"|"medium"|"low", source: string }
+- suggested_dependencies (array, max 5): each { field: string, relationship: "depends_on"|"affects", reason: string (max 80 chars) }
+- expert_questions (array, max 3 strings): key gaps to fill with domain expert
 - confidence ("high"|"medium"|"low"): overall confidence in this enrichment
-- reasoning (string): brief explanation of your analysis
+- reasoning (string, max 150 chars): brief explanation
 
 Field to enrich:
   ID: ${field.id}
@@ -73,7 +73,7 @@ Field to enrich:
       model: anthropic('claude-sonnet-4-6'),
       system: SYSTEM_PROMPT,
       prompt: userPrompt,
-      maxOutputTokens: 1500,
+      maxOutputTokens: 4096,
     });
 
     // Strip markdown code fences if present
