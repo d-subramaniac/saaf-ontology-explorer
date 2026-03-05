@@ -13,6 +13,9 @@ interface ScenarioParams {
   citizenship: string;
   loanAmount: string;
   units: string;
+  propertyState: string;
+  pppTerm: string;
+  pppStructure: string;
   isInterestOnly: boolean;
   isShortTermRental: boolean;
 }
@@ -23,9 +26,12 @@ const DEFAULTS: ScenarioParams = {
   creditScore: '',
   propertyType: 'SFR',
   loanPurpose: 'Purchase',
-  citizenship: 'US Citizen / Permanent Resident',
+  citizenship: 'US Citizen',
   loanAmount: '',
   units: '1',
+  propertyState: '',
+  pppTerm: '3yr',
+  pppStructure: 'Step-Down',
   isInterestOnly: false,
   isShortTermRental: false,
 };
@@ -42,25 +48,25 @@ const DEMO_SCENARIOS: DemoScenario[] = [
     label: 'Standard SFR',
     description: 'Strong DSCR, clean profile',
     color: 'bg-emerald-50 border-emerald-200 hover:border-emerald-400 text-emerald-800',
-    params: { dscr: '1.30', ltv: '70', creditScore: '740', propertyType: 'SFR', loanPurpose: 'Purchase', citizenship: 'US Citizen / Permanent Resident', loanAmount: '500000', units: '1', isInterestOnly: false, isShortTermRental: false },
+    params: { dscr: '1.30', ltv: '70', creditScore: '740', propertyType: 'SFR', loanPurpose: 'Purchase', citizenship: 'US Citizen', loanAmount: '500000', units: '1', propertyState: 'CA', pppTerm: '3yr', pppStructure: 'Step-Down', isInterestOnly: false, isShortTermRental: false },
   },
   {
     label: 'Foreign National',
     description: 'DSCR < 1.0 — ineligibility triggers',
     color: 'bg-red-50 border-red-200 hover:border-red-400 text-red-800',
-    params: { dscr: '0.92', ltv: '65', creditScore: '720', propertyType: 'SFR', loanPurpose: 'Purchase', citizenship: 'Foreign National', loanAmount: '750000', units: '1', isInterestOnly: false, isShortTermRental: false },
+    params: { dscr: '0.92', ltv: '65', creditScore: '720', propertyType: 'SFR', loanPurpose: 'Purchase', citizenship: 'Foreign National', loanAmount: '750000', units: '1', propertyState: 'FL', pppTerm: 'None', pppStructure: 'N/A', isInterestOnly: false, isShortTermRental: false },
   },
   {
     label: '5-10 Unit',
     description: 'Multi-family near DSCR threshold',
     color: 'bg-amber-50 border-amber-200 hover:border-amber-400 text-amber-800',
-    params: { dscr: '1.05', ltv: '75', creditScore: '700', propertyType: '5-10 Unit', loanPurpose: 'Purchase', citizenship: 'US Citizen / Permanent Resident', loanAmount: '1200000', units: '5-10', isInterestOnly: false, isShortTermRental: false },
+    params: { dscr: '1.05', ltv: '75', creditScore: '700', propertyType: '5-10 Unit', loanPurpose: 'Purchase', citizenship: 'US Citizen', loanAmount: '1200000', units: '5-10', propertyState: 'TX', pppTerm: '5yr', pppStructure: 'Step-Down', isInterestOnly: false, isShortTermRental: false },
   },
   {
     label: 'STR Interest-Only',
     description: 'Short-term rental, IO, high LTV',
     color: 'bg-purple-50 border-purple-200 hover:border-purple-400 text-purple-800',
-    params: { dscr: '1.10', ltv: '80', creditScore: '760', propertyType: 'STR (Short-Term Rental)', loanPurpose: 'Cash-out Refinance', citizenship: 'US Citizen / Permanent Resident', loanAmount: '650000', units: '1', isInterestOnly: true, isShortTermRental: true },
+    params: { dscr: '1.10', ltv: '80', creditScore: '760', propertyType: 'STR (Short-Term Rental)', loanPurpose: 'Cash-out Refinance', citizenship: 'US Citizen', loanAmount: '650000', units: '1', propertyState: 'CO', pppTerm: '2yr', pppStructure: 'Fixed', isInterestOnly: true, isShortTermRental: true },
   },
 ];
 
@@ -72,8 +78,11 @@ function buildQuestion(p: ScenarioParams): string {
   parts.push(p.propertyType);
   if (p.units && Number(p.units) > 1) parts.push(`${p.units} units`);
   parts.push(p.loanPurpose.toLowerCase());
-  if (p.citizenship !== 'US Citizen / Permanent Resident') parts.push(p.citizenship.toLowerCase());
+  parts.push(p.citizenship);
   if (p.loanAmount) parts.push(`$${Number(p.loanAmount).toLocaleString()} loan amount`);
+  if (p.propertyState) parts.push(`property state: ${p.propertyState}`);
+  if (p.pppTerm && p.pppTerm !== 'None') parts.push(`${p.pppTerm} ${p.pppStructure !== 'N/A' ? p.pppStructure + ' ' : ''}prepayment penalty`);
+  else parts.push('no prepayment penalty');
   if (p.isInterestOnly) parts.push('interest-only');
   if (p.isShortTermRental) parts.push('short-term rental');
 
@@ -82,7 +91,16 @@ function buildQuestion(p: ScenarioParams): string {
 
 const PROPERTY_TYPES = ['SFR', '2-4 Unit', '5-10 Unit', 'Warrantable Condo', 'NW Condo', 'Condotel', 'STR (Short-Term Rental)'];
 const LOAN_PURPOSES = ['Purchase', 'Rate & Term Refinance', 'Cash-out Refinance'];
-const CITIZENSHIP_TYPES = ['US Citizen / Permanent Resident', 'Foreign National', 'Non-Permanent Resident'];
+const CITIZENSHIP_TYPES = ['US Citizen', 'Permanent Resident', 'Foreign National', 'Non-Permanent Resident'];
+const PPP_TERMS = ['None', '1yr', '2yr', '3yr', '4yr', '5yr'];
+const PPP_STRUCTURES = ['N/A', 'Fixed', 'Step-Down'];
+const US_STATES = [
+  'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA',
+  'HI','ID','IL','IN','IA','KS','KY','LA','ME','MD',
+  'MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ',
+  'NM','NY','NC','ND','OH','OK','OR','PA','RI','SC',
+  'SD','TN','TX','UT','VT','VA','WA','WV','WI','WY','DC',
+];
 
 const inputCls = 'w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-900 text-sm placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500';
 const labelCls = 'text-xs font-medium text-gray-600 mb-1 block';
@@ -120,6 +138,9 @@ export default function ScenarioPage() {
   if (params.ltv && ltvNum > 80 && params.citizenship === 'Foreign National') {
     flags.push({ type: 'warn', msg: 'Foreign National — LTV likely capped below 80%' });
   }
+  if (params.pppTerm && params.pppTerm !== 'None') {
+    flags.push({ type: 'ok', msg: `${params.pppTerm} PPP (${params.pppStructure}) — pricing bonus applied` });
+  }
 
   const flagStyle = {
     error: 'bg-red-50 border-red-200 text-red-700',
@@ -135,8 +156,10 @@ export default function ScenarioPage() {
   if (params.creditScore) summaryChips.push(`FICO ${params.creditScore}`);
   summaryChips.push(params.propertyType);
   summaryChips.push(params.loanPurpose);
-  if (params.citizenship !== 'US Citizen / Permanent Resident') summaryChips.push(params.citizenship);
+  summaryChips.push(params.citizenship);
   if (params.loanAmount) summaryChips.push(`$${Number(params.loanAmount).toLocaleString()}`);
+  if (params.propertyState) summaryChips.push(params.propertyState);
+  if (params.pppTerm && params.pppTerm !== 'None') summaryChips.push(`PPP ${params.pppTerm}`);
   if (params.isInterestOnly) summaryChips.push('IO');
   if (params.isShortTermRental) summaryChips.push('STR');
 
@@ -226,6 +249,39 @@ export default function ScenarioPage() {
               <select value={params.citizenship} onChange={e => set('citizenship', e.target.value)} className={inputCls}>
                 {CITIZENSHIP_TYPES.map(c => <option key={c}>{c}</option>)}
               </select>
+            </div>
+
+            <div>
+              <label className={labelCls}>Property State</label>
+              <select value={params.propertyState} onChange={e => set('propertyState', e.target.value)} className={inputCls}>
+                <option value="">— Select State —</option>
+                {US_STATES.map(s => <option key={s}>{s}</option>)}
+              </select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className={labelCls}>PPP Term</label>
+                <select value={params.pppTerm} onChange={e => {
+                  const t = e.target.value;
+                  set('pppTerm', t);
+                  if (t === 'None') set('pppStructure', 'N/A');
+                  else if (params.pppStructure === 'N/A') set('pppStructure', 'Step-Down');
+                }} className={inputCls}>
+                  {PPP_TERMS.map(t => <option key={t}>{t}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className={labelCls}>PPP Structure</label>
+                <select
+                  value={params.pppStructure}
+                  onChange={e => set('pppStructure', e.target.value)}
+                  disabled={params.pppTerm === 'None'}
+                  className={`${inputCls} disabled:opacity-40`}
+                >
+                  {PPP_STRUCTURES.map(s => <option key={s}>{s}</option>)}
+                </select>
+              </div>
             </div>
 
             {/* Toggles */}

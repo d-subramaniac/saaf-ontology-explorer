@@ -57,6 +57,8 @@ function getSectionStyle(heading: string | null): SectionStyle {
     return { border: 'border-gray-200', headerBg: 'bg-gray-100', headerText: 'text-gray-700', icon: '□' };
   if (h.includes('calc') || h.includes('formula') || h.includes('how'))
     return { border: 'border-purple-200', headerBg: 'bg-purple-50', headerText: 'text-purple-800', icon: '=' };
+  if (h.includes('rate') || h.includes('par'))
+    return { border: 'border-violet-200', headerBg: 'bg-violet-50', headerText: 'text-violet-800', icon: '≈' };
   if (h.includes('threshold') || h.includes('key'))
     return { border: 'border-sky-200', headerBg: 'bg-sky-50', headerText: 'text-sky-800', icon: '⊕' };
   return { border: 'border-gray-200', headerBg: 'bg-gray-50', headerText: 'text-gray-700', icon: '›' };

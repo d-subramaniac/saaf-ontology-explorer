@@ -49,11 +49,19 @@ List specific restrictions — max loan amount, prohibited features, overlays.
 ## Documentation Requirements
 List documents specifically required for this scenario beyond standard package.
 
+## Estimated Rate at Par
+Based on the LLPA stack for this scenario, estimate what rate would price near par:
+- List each applicable LLPA category with its direction (BONUS = reduces rate, PENALTY = adds to rate)
+- If the ontology context contains specific point values, use them; otherwise state direction only
+- Summarize total pricing direction (e.g., "net +1.25 pts above par" or "net −0.25 pts — below par")
+- State what rate/note rate would be needed to net par after all adjustments, if base rate context is available
+
 Rules:
 - Bullet points only — no prose paragraphs
 - Cite exact thresholds (e.g. "DSCR minimum 1.0 for Foreign National", "max LTV 65% at this DSCR tier")
 - 3-6 bullets per section
-- If ontology context doesn't cover something, say "not in ontology context"`;
+- If ontology context doesn't cover something, say "not in ontology context"
+- For ## Estimated Rate at Par: use directional language if exact values unavailable; never fabricate specific basis-point values not in context`;
 
 
 interface SearchResult {
@@ -123,8 +131,16 @@ export async function POST(req: Request) {
 
   const isForeignNational = prompt.includes('Foreign National');
   const isNonPerm = prompt.includes('Non-Permanent');
+  const isPermanentResident = prompt.includes('Permanent Resident') && !isForeignNational && !isNonPerm;
   const isIO = prompt.includes('interest-only');
   const isSTR = prompt.includes('Short-Term') || prompt.includes('STR (Short-Term Rental)');
+  const hasPPP = !prompt.includes('no prepayment penalty');
+  const pppTermMatch = /(\d)yr.*prepayment penalty/.exec(prompt);
+  const pppTerm = pppTermMatch ? parseInt(pppTermMatch[1]) : null;
+  const isStepDown = prompt.includes('Step-Down prepayment');
+  const isFixed = prompt.includes('Fixed prepayment');
+  const propertyStateMatch = /property state: ([A-Z]{2})/.exec(prompt);
+  const propertyState = propertyStateMatch ? propertyStateMatch[1] : null;
 
   // ── Deterministic pricing IDs based on scenario params ─────────────────────
   const pricingIds: string[] = [];
@@ -145,7 +161,15 @@ export async function POST(req: Request) {
   if (isIO) pricingIds.push('pricing.feature_adjustments.interest_only', 'pricing.product_type_caps.feature_interest_only');
   if (isForeignNational) pricingIds.push('pricing.feature_adjustments.foreign_national', 'pricing.product_type_caps.foreign_national');
   if (isNonPerm) pricingIds.push('pricing.feature_adjustments.non_perm_resident', 'pricing.product_type_caps.non_permanent_resident');
+  if (isPermanentResident) pricingIds.push('pricing.feature_adjustments.permanent_resident');
   if (isSTR) pricingIds.push('pricing.feature_adjustments.short_term_rental', 'pricing.product_type_caps.str');
+
+  // PPP adjustments
+  if (hasPPP && pppTerm) {
+    const structure = isStepDown ? 'step_down' : isFixed ? 'fixed' : 'step_down';
+    pricingIds.push(`pricing.ppp_adjustments.${pppTerm}yr_${structure}`);
+    pricingIds.push('pricing.ppp_adjustments');
+  }
 
   // Loan amount tier
   if (loanAmountVal !== null) {
@@ -175,6 +199,8 @@ export async function POST(req: Request) {
     isIO ? 'interest only pricing adjustment' : '',
     isForeignNational ? 'foreign national LLPA adjustment' : '',
     isSTR ? 'short term rental LLPA adjustment' : '',
+    hasPPP && pppTerm ? `prepayment penalty ${pppTerm} year pricing bonus` : 'pricing near par rate adjustment',
+    propertyState ? `${propertyState} state restrictions DSCR loan` : '',
   ].filter(Boolean).join(' ');
 
   // Run all searches in parallel (deterministic + 4 semantic)
