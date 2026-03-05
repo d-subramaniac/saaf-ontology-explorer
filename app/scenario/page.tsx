@@ -109,12 +109,16 @@ export default function ScenarioPage() {
   const [params, setParams] = useState<ScenarioParams>(DEFAULTS);
   const [submitted, setSubmitted] = useState(false);
 
-  const { completion, complete, isLoading } = useCompletion({ api: '/api/analyze', streamProtocol: 'text' });
+  const { completion, complete, isLoading, error: completionError } = useCompletion({ api: '/api/analyze', streamProtocol: 'text' });
 
   async function handleAnalyze(e: React.FormEvent) {
     e.preventDefault();
     setSubmitted(true);
-    await complete(buildQuestion(params));
+    try {
+      await complete(buildQuestion(params));
+    } catch {
+      // error is surfaced via completionError state
+    }
   }
 
   function set(key: keyof ScenarioParams, value: string | boolean) {
@@ -329,7 +333,13 @@ export default function ScenarioPage() {
 
         {/* Result panel */}
         <div>
-          {!submitted && !completion && (
+          {completionError && (
+            <div className="mb-3 bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-700">
+              <span className="font-semibold">Analysis error: </span>{completionError.message || 'Request failed — check your API configuration.'}
+            </div>
+          )}
+
+          {!submitted && !completion && !completionError && (
             <div className="h-64 flex items-center justify-center bg-white border border-gray-200 border-dashed rounded-xl">
               <div className="text-center text-gray-400">
                 <svg className="w-9 h-9 mx-auto mb-3 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
