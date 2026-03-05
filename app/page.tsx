@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import ReactMarkdown from 'react-markdown';
+import SectionedMarkdown from './components/SectionedMarkdown';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -124,20 +124,9 @@ function AnswerBlock({ msg, isStreaming }: { msg: MessageWithSources; isStreamin
             </span>
           )}
         </div>
-        <div className="px-5 py-4">
+        <div className="px-4 py-4">
           {msg.content ? (
-            <div className="prose prose-sm max-w-none
-              prose-headings:font-semibold prose-headings:text-gray-900
-              prose-h1:text-base prose-h1:mt-4 prose-h1:mb-2
-              prose-h2:text-sm prose-h2:mt-4 prose-h2:mb-2 prose-h2:pt-3 prose-h2:border-t prose-h2:border-gray-100
-              prose-h3:text-sm prose-h3:text-gray-700 prose-h3:mt-3 prose-h3:mb-1
-              prose-p:text-gray-700 prose-p:leading-relaxed prose-p:my-1.5 prose-p:text-sm
-              prose-ul:my-2 prose-ul:space-y-1
-              prose-li:text-gray-700 prose-li:text-sm prose-li:my-0
-              prose-strong:text-gray-900 prose-strong:font-semibold
-              prose-code:text-blue-700 prose-code:bg-blue-50 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:text-xs prose-code:font-mono prose-code:before:content-none prose-code:after:content-none">
-              <ReactMarkdown>{msg.content}</ReactMarkdown>
-            </div>
+            <SectionedMarkdown content={msg.content} />
           ) : (
             <p className="text-sm text-gray-400 italic">Searching ontology and composing answer...</p>
           )}

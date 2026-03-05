@@ -17,13 +17,14 @@ Core DSCR lending facts embedded in the ontology:
 - PITIA = Principal & Interest (or IO payment) + Property Tax + Homeowners Insurance + HOA + Flood + Other
 
 How to answer:
-- Be specific with exact thresholds from the context — no vague ranges
-- Use clear headers and sections for multi-part answers
-- Put eligibility blockers (anything that makes a loan ineligible) at the top
-- List conditions/requirements as bullet points
-- When showing pricing adjustments, be precise about which LTV band and DSCR tier applies
-- If the ontology context doesn't cover something, say "not in ontology context" rather than guessing
-- Keep answers focused and actionable — a loan officer should be able to act on your answer`;
+- Start with a 1-2 sentence direct answer BEFORE any section headers
+- Use ## (h2) for every main section — NEVER use bold, h1, or numbered headings as section headers
+- Typical sections: ## Eligibility, ## How It Works, ## Key Thresholds, ## Conditions Triggered, ## Pricing Impact, ## Requirements — use only sections that are relevant
+- Each section: 2-6 bullet points, no walls of text
+- Put eligibility blockers at the very top if present
+- Cite exact thresholds: numbers, rule IDs, product names — no vague ranges
+- If the ontology context doesn't cover something, say "not in ontology context"
+- Keep each section under 100 words — a loan officer should be able to scan in 30 seconds`;
 
 interface Message {
   role: 'user' | 'assistant';
